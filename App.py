@@ -3,11 +3,11 @@ import streamlit as st
 
 def state(vis, ceiling, fill):
     s = 'RED'
-    if vis >= 800  and (ceiling >= 200  or fill == 0): s = 'AMB'
-    if vis >= 1600 and (ceiling >= 300  or fill == 0): s = 'YLW'
-    if vis >= 3700 and (ceiling >= 700  or fill == 0): s = 'GRN'
-    if vis >= 5000 and (ceiling >= 1500 or fill == 0): s = 'WHT'
-    if vis >= 8000 and (ceiling >= 2500 or fill == 0): s = 'BLU'
+    if vis >= 800  and (ceiling >= 200  or fill <= 1): s = 'AMB'
+    if vis >= 1600 and (ceiling >= 300  or fill <= 1): s = 'YLO'
+    if vis >= 3700 and (ceiling >= 700  or fill <= 1): s = 'GRN'
+    if vis >= 5000 and (ceiling >= 1500 or fill <= 1): s = 'WHT'
+    if vis >= 8000 and (ceiling >= 2500 or fill <= 1): s = 'BLU'
     return s
 
 def new_question():
