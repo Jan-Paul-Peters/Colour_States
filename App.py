@@ -27,7 +27,7 @@ def new_question():
     clouds = random.choice(['FEW', 'SCT', 'BKN', 'OVC'])
 
     return {
-        "metar": f"METAR EHWO ..... {str(vis // 100).zfill(4)} {clouds}{str(ceil // 100).zfill(3)} .....",
+        "metar": f"METAR EHWO ..... {str((vis // 100)*100).zfill(4)} {clouds}{str(ceil // 100).zfill(3)} .....",
         "answer": color,
     }
 
