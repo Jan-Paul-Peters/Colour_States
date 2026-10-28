@@ -84,54 +84,64 @@ so `BKN008` = 800 ft and `OVC025` = 2500 ft.
         )
 
 
+def submit_answer(answer):
+    correct = answer.strip().upper() == ss.q["answer"]
+    ss.score += correct
+    prefix = "Affirm" if correct else "Negative"
+    ss.result = f"{prefix}, the Color State is {ss.q['answer']}"
+    ss.correct = correct
+    st.rerun()
+
+
 st.title("Colour State practice")
 show_help()
 
 if "total" not in st.session_state:
     st.session_state.update(total=0, index=0, score=0, q=None, result=None,
-                            mode="Intypen", correct=False)
+                            mode="Type in", correct=False)
 
 ss = st.session_state
 
 if ss.total == 0:
-    aantal = st.number_input("Hoeveel oefenvragen wil je?", 1, 50, 5)
-    mode = st.radio("Hoe wil je antwoorden?", ["Intypen", "Meerkeuze"],
+    count = st.number_input("How many practice questions?", 1, 50, 5)
+    mode = st.radio("How do you want to answer?", ["Type in", "Multiple choice"],
                     horizontal=True)
     if st.button("▶ Start"):
-        ss.update(total=int(aantal), index=1, score=0,
+        ss.update(total=int(count), index=1, score=0,
                   q=new_question(), result=None, mode=mode)
         st.rerun()
 else:
-    st.write(f"Vraag {ss.index} van {ss.total}")
+    st.write(f"Question {ss.index} of {ss.total}")
     st.code(ss.q["metar"])
 
     if ss.result is None:
-        with st.form("antwoord", clear_on_submit=True):
-            if ss.mode == "Meerkeuze":
-                answer = st.radio("What is the Color State?", COLOURS,
-                                  index=None, horizontal=True)
-            else:
-                answer = st.text_input("What is the Color State?")
-            if st.form_submit_button("Controleer"):
-                if not answer:
-                    st.warning("Kies of typ eerst een antwoord.")
-                else:
-                    correct = answer.strip().upper() == ss.q["answer"]
-                    ss.score += correct
-                    prefix = "Affirm" if correct else "Negative"
-                    ss.result = f"{prefix}, the Color State is {ss.q['answer']}"
-                    ss.correct = correct
-                    st.rerun()
+        st.write("What is the Color State?")
+        if ss.mode == "Multiple choice":
+            # One click answers immediately, no separate confirm step
+            cols = st.columns(len(COLOURS))
+            for col, colour in zip(cols, COLOURS):
+                if col.button(colour, key=f"opt_{ss.index}_{colour}",
+                              use_container_width=True):
+                    submit_answer(colour)
+        else:
+            with st.form("answer", clear_on_submit=True):
+                answer = st.text_input("What is the Color State?",
+                                       label_visibility="collapsed")
+                if st.form_submit_button("Check"):
+                    if not answer:
+                        st.warning("Please type an answer first.")
+                    else:
+                        submit_answer(answer)
     else:
         (st.success if ss.correct else st.error)(ss.result)
         if ss.index < ss.total:
-            if st.button("Volgende vraag"):
+            if st.button("Next question"):
                 ss.index += 1
                 ss.q = new_question()
                 ss.result = None
                 st.rerun()
         else:
-            st.subheader(f"Klaar! Score: {ss.score} / {ss.total}")
-            if st.button("Opnieuw"):
+            st.subheader(f"Done! Score: {ss.score} / {ss.total}")
+            if st.button("Restart"):
                 ss.total = 0
                 st.rerun()
