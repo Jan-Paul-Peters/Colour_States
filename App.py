@@ -11,6 +11,9 @@ BUCKETS = {
     'BLU': (8000, 9999, 2500, 5000),
 }
 
+COLOURS = ['BLU', 'WHT', 'GRN', 'YLO', 'AMB', 'RED']
+
+
 def new_question():
     color = random.choice(list(BUCKETS))
     vmin, vmax, cmin, cmax = BUCKETS[color]
@@ -51,7 +54,7 @@ def new_question():
 
 
 def show_help():
-    with st.expander("ℹ️ Help: the rules"):
+    with st.expander("ℹ️ Hulp: de regels"):
         st.markdown(
             """
 **The Colour State is decided by the worse of two values:**
@@ -62,12 +65,12 @@ visibility and cloud ceiling.
 | BLU | 8000 m or more | 2500 ft or higher |
 | WHT | 5000 – 7999 m | 1500 – 2499 ft |
 | GRN | 3700 – 4999 m | 700 – 1499 ft |
-| YLW | 1600 – 3699 m | 300 – 699 ft |
+| YLO | 1600 – 3699 m | 300 – 699 ft |
 | AMB | 800 – 1599 m | 200 – 299 ft |
 | RED | below 800 m | below 200 ft |
 
 **What counts as a ceiling?**
-- Only **BKN** (5-7) and **OVC** (8) form a ceiling.
+- Only **BKN** (5-7 oktas) and **OVC** (8 oktas) form a ceiling.
 - **FEW** and **SCT** do *not* count. Ignore their height, visibility alone decides.
 - **NSC** (no significant cloud) has no ceiling either, so visibility alone decides.
 - **CAVOK** replaces visibility and clouds (10 km or more, no cloud below 5000 ft), so it is always **BLU**.
@@ -85,15 +88,18 @@ st.title("Colour State oefenen")
 show_help()
 
 if "total" not in st.session_state:
-    st.session_state.update(total=0, index=0, score=0, q=None, result=None)
+    st.session_state.update(total=0, index=0, score=0, q=None, result=None,
+                            mode="Intypen", correct=False)
 
 ss = st.session_state
 
 if ss.total == 0:
     aantal = st.number_input("Hoeveel oefenvragen wil je?", 1, 50, 5)
+    mode = st.radio("Hoe wil je antwoorden?", ["Intypen", "Meerkeuze"],
+                    horizontal=True)
     if st.button("▶ Start"):
         ss.update(total=int(aantal), index=1, score=0,
-                  q=new_question(), result=None)
+                  q=new_question(), result=None, mode=mode)
         st.rerun()
 else:
     st.write(f"Vraag {ss.index} van {ss.total}")
@@ -101,14 +107,21 @@ else:
 
     if ss.result is None:
         with st.form("antwoord", clear_on_submit=True):
-            answer = st.text_input("What is the Color State?")
+            if ss.mode == "Meerkeuze":
+                answer = st.radio("What is the Color State?", COLOURS,
+                                  index=None, horizontal=True)
+            else:
+                answer = st.text_input("What is the Color State?")
             if st.form_submit_button("Controleer"):
-                correct = answer.strip().upper() == ss.q["answer"]
-                ss.score += correct
-                prefix = "Affirm" if correct else "Negative"
-                ss.result = f"{prefix}, the Color State is {ss.q['answer']}"
-                ss.correct = correct
-                st.rerun()
+                if not answer:
+                    st.warning("Kies of typ eerst een antwoord.")
+                else:
+                    correct = answer.strip().upper() == ss.q["answer"]
+                    ss.score += correct
+                    prefix = "Affirm" if correct else "Negative"
+                    ss.result = f"{prefix}, the Color State is {ss.q['answer']}"
+                    ss.correct = correct
+                    st.rerun()
     else:
         (st.success if ss.correct else st.error)(ss.result)
         if ss.index < ss.total:
