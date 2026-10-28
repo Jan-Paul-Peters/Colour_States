@@ -51,7 +51,7 @@ def new_question():
 
 
 def show_help():
-    with st.expander("ℹ️ Hulp: de regels"):
+    with st.expander("ℹ️ Help: the rules"):
         st.markdown(
             """
 **The Colour State is decided by the worse of two values:**
@@ -67,7 +67,7 @@ visibility and cloud ceiling.
 | RED | below 800 m | below 200 ft |
 
 **What counts as a ceiling?**
-- Only **BKN** (5-7 oktas) and **OVC** (8 oktas) form a ceiling.
+- Only **BKN** (5-7) and **OVC** (8) form a ceiling.
 - **FEW** and **SCT** do *not* count. Ignore their height, visibility alone decides.
 - **NSC** (no significant cloud) has no ceiling either, so visibility alone decides.
 - **CAVOK** replaces visibility and clouds (10 km or more, no cloud below 5000 ft), so it is always **BLU**.
