@@ -11,7 +11,7 @@ BUCKETS = {
     'BLU': (8000, 9999, 2500, 5000),
 }
 
-COLOURS = ['BLU', 'WHT', 'GRN', 'YLO', 'AMB', 'RED']
+COLOURS = ['RED', 'AMB', 'YLO', 'GRN', 'WHT', 'BLU']
 
 
 def new_question():
