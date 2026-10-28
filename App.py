@@ -11,7 +11,7 @@ def state(vis, ceiling, fill):
     return s
 
 def new_question():
-    vis = random.randint(0, 10000)
+    vis = random.randint(0, 100)*100
     ceil = random.randint(0, 5000)
     n = random.randint(1, 8)
 
