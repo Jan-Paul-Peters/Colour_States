@@ -15,21 +15,29 @@ def new_question():
     color = random.choice(list(BUCKETS))
     vmin, vmax, cmin, cmax = BUCKETS[color]
 
-    vis = random.randint(vmin, vmax)
-    ceil = random.randint(cmin, cmax)
-
-    # Half the time, let one value be higher, so the other one decides the color
-    if random.random() < 0.5:
-        vis = random.randint(vmin, 9999)
-    else:
-        ceil = random.randint(cmin, 5000)
-
     clouds = random.choice(['FEW', 'SCT', 'BKN', 'OVC'])
+    has_ceiling = clouds in ('BKN', 'OVC')
+
+    if has_ceiling:
+        vis = random.randint(vmin, vmax)
+        ceil = random.randint(cmin, cmax)
+
+        # Half the time, let one value be higher, so the other one decides the color
+        if random.random() < 0.5:
+            vis = random.randint(vmin, 9999)
+        else:
+            ceil = random.randint(cmin, 5000)
+    else:
+        # FEW/SCT: no ceiling, so visibility alone decides the color.
+        # The cloud height is a distractor and can be anything.
+        vis = random.randint(vmin, vmax)
+        ceil = random.randint(1, 5000)
 
     return {
         "metar": f"METAR EHWO ..... {str((vis // 100)*100).zfill(4)} {clouds}{str(ceil // 100).zfill(3)} .....",
         "answer": color,
     }
+
 
 
 st.title("Colour State oefenen")
