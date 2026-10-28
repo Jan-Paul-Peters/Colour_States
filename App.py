@@ -1,34 +1,38 @@
 import random
 import streamlit as st
 
-def state(vis, ceiling, fill):
-    s = 'RED'
-    if vis >= 800  and (ceiling >= 200  or fill <= 1): s = 'AMB'
-    if vis >= 1600 and (ceiling >= 300  or fill <= 1): s = 'YLO'
-    if vis >= 3700 and (ceiling >= 700  or fill <= 1): s = 'GRN'
-    if vis >= 5000 and (ceiling >= 1500 or fill <= 1): s = 'WHT'
-    if vis >= 8000 and (ceiling >= 2500 or fill <= 1): s = 'BLU'
-    return s
+# color: (min vis, max vis, min ceiling, max ceiling)
+BUCKETS = {
+    'RED': (0,    799,  0,    199),
+    'AMB': (800,  1599, 200,  299),
+    'YLW': (1600, 3699, 300,  699),
+    'GRN': (3700, 4999, 700,  1499),
+    'WHT': (5000, 7999, 1500, 2499),
+    'BLU': (8000, 9999, 2500, 5000),
+}
 
 def new_question():
-    vis = random.randint(0, 100)*100
-    ceil = random.randint(0, 5000)
-    n = random.randint(1, 8)
+    color = random.choice(list(BUCKETS))
+    vmin, vmax, cmin, cmax = BUCKETS[color]
 
-    if n <= 2:   clouds = 'FEW'
-    elif n <= 4: clouds = 'SCT'
-    elif n <= 7: clouds = 'BKN'
-    else:        clouds = 'OVC'
+    vis = random.randint(vmin, vmax)
+    ceil = random.randint(cmin, cmax)
 
-    visib = str(vis).zfill(4)[-4:]
-    ceiling = str(ceil // 100).zfill(3)
+    # Half the time, let one value be higher, so the other one decides the color
+    if random.random() < 0.5:
+        vis = random.randint(vmin, 9999)
+    else:
+        ceil = random.randint(cmin, 5000)
+
+    clouds = random.choice(['FEW', 'SCT', 'BKN', 'OVC'])
 
     return {
-        "metar": f"METAR EHWO ..... {visib} {clouds}{ceiling} .....",
-        "answer": state(vis, ceil, n),
+        "metar": f"METAR EHWO ..... {str(vis).zfill(4)} {clouds}{str(ceil // 100).zfill(3)} .....",
+        "answer": color,
     }
 
-st.title("Color State oefenen")
+
+st.title("Colour State oefenen")
 
 if "total" not in st.session_state:
     st.session_state.update(total=0, index=0, score=0, q=None, result=None)
