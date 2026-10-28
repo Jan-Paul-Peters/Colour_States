@@ -3,7 +3,7 @@ import streamlit as st
 
 # color: (min vis, max vis, min ceiling, max ceiling)
 BUCKETS = {
-    'RED': (0,    799,  0,    199),
+    'RED': (0,    799,  100,    199),
     'AMB': (800,  1599, 200,  299),
     'YLO': (1600, 3699, 300,  699),
     'GRN': (3700, 4999, 700,  1499),
@@ -54,7 +54,7 @@ def new_question():
 
 
 def show_help():
-    with st.expander("ℹ️ Hulp: de regels"):
+    with st.expander("ℹ️ Help: Rules"):
         st.markdown(
             """
 **The Colour State is decided by the worse of two values:**
@@ -84,7 +84,7 @@ so `BKN008` = 800 ft and `OVC025` = 2500 ft.
         )
 
 
-st.title("Colour State oefenen")
+st.title("Colour State practice")
 show_help()
 
 if "total" not in st.session_state:
