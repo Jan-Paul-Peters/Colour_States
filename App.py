@@ -105,49 +105,23 @@ else:
     st.write(f"Vraag {ss.index} van {ss.total}")
     st.code(ss.q["metar"])
 
-     if ss.result is None:
--    with st.form("antwoord", clear_on_submit=True):
--        if ss.mode == "Meerkeuze":
--            answer = st.radio("What is the Color State?", COLOURS,
--                              index=None, horizontal=True)
--        else:
-+    if ss.mode == "Meerkeuze":
-+        st.write("What is the Color State?")
-+
-+        columns = st.columns(len(COLOURS))
-+        selected_answer = None
-+
-+        for column, colour in zip(columns, COLOURS):
-+            with column:
-+                if st.button(colour, use_container_width=True):
-+                    selected_answer = colour
-+
-+        if selected_answer is not None:
-+            correct = selected_answer == ss.q["answer"]
-+            ss.score += correct
-+            prefix = "Affirm" if correct else "Negative"
-+            ss.result = f"{prefix}, the Color State is {ss.q['answer']}"
-+            ss.correct = correct
-+            st.rerun()
-+
-+    else:
-+        with st.form("antwoord", clear_on_submit=True):
-             answer = st.text_input("What is the Color State?")
--        if st.form_submit_button("Controleer"):
--            if not answer:
--                st.warning("Kies of typ eerst een antwoord.")
--            else:
-+
-+            if st.form_submit_button("Controleer"):
-+                if not answer:
-+                    st.warning("Kies of typ eerst een antwoord.")
-+                else:
-                     correct = answer.strip().upper() == ss.q["answer"]
-                     ss.score += correct
-                     prefix = "Affirm" if correct else "Negative"
-                     ss.result = f"{prefix}, the Color State is {ss.q['answer']}"
-                     ss.correct = correct
-                     st.rerun()
+    if ss.result is None:
+        with st.form("antwoord", clear_on_submit=True):
+            if ss.mode == "Meerkeuze":
+                answer = st.radio("What is the Color State?", COLOURS,
+                                  index=None, horizontal=True)
+            else:
+                answer = st.text_input("What is the Color State?")
+            if st.form_submit_button("Controleer"):
+                if not answer:
+                    st.warning("Kies of typ eerst een antwoord.")
+                else:
+                    correct = answer.strip().upper() == ss.q["answer"]
+                    ss.score += correct
+                    prefix = "Affirm" if correct else "Negative"
+                    ss.result = f"{prefix}, the Color State is {ss.q['answer']}"
+                    ss.correct = correct
+                    st.rerun()
     else:
         (st.success if ss.correct else st.error)(ss.result)
         if ss.index < ss.total:
