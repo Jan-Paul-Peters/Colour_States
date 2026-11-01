@@ -3,7 +3,7 @@ import streamlit as st
 
 # color: (min vis, max vis, min ceiling, max ceiling)
 BUCKETS = {
-    'RED': (0,    799,  100,    199),
+    'RED': (0,    799,  101,    199),
     'AMB': (800,  1599, 200,  299),
     'YLO': (1600, 3699, 300,  699),
     'GRN': (3700, 4999, 700,  1499),
